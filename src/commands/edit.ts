@@ -150,7 +150,7 @@ export class EditCommands implements vs.Disposable {
 			for (const e of edit.edits) {
 				const uri = vs.Uri.file(edit.file);
 				const document = await vs.workspace.openTextDocument(uri);
-				if (applyEditsSequentially)
+				if (!changes)
 					changes = new vs.WorkspaceEdit();
 				changes.replace(
 					vs.Uri.file(edit.file),
@@ -206,7 +206,7 @@ export class EditCommands implements vs.Disposable {
 		change.linkedEditGroups.forEach((leg) => {
 			leg.positions.forEach((pos) => {
 				const defaultValue = documentText.substr(pos.offset, leg.length);
-				const choices = leg.suggestions ? leg.suggestions.map((s) => s.value) : null;
+				const choices = leg.suggestions ? leg.suggestions.map((s) => s.value) : undefined;
 				placeholders.push({ offset: pos.offset, length: leg.length, defaultValue, choices, placeholderNumber });
 			});
 			placeholderNumber++;

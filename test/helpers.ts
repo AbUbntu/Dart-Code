@@ -159,7 +159,7 @@ afterEach("run deferred functions", async function () {
 	let firstError: any;
 	for (const d of _.concat(deferredItems, deferredToLastItems)) {
 		try {
-			await d(this.currentTest && this.currentTest.state);
+			await d(this.currentTest ? this.currentTest.state : undefined);
 		} catch (e) {
 			logError(`Error running deferred function: ${e}`);
 			// TODO: Add named for deferred functions instead...

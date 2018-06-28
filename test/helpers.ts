@@ -62,8 +62,12 @@ export const flutterTestOtherFile = vs.Uri.file(path.join(fsPath(flutterHelloWor
 export const flutterTestBrokenFile = vs.Uri.file(path.join(fsPath(flutterHelloWorldFolder), "test/broken_test.dart"));
 
 // TODO: Make these always return for the current active file (which is what many tests already use).
-export let doc: vs.TextDocument;
-export let editor: vs.TextEditor;
+export function currentEditor(): vs.TextEditor {
+	return vs.window.activeTextEditor;
+}
+export function currentDoc(): vs.TextDocument {
+	return vs.window.activeTextEditor && vs.window.activeTextEditor.document;
+}
 export let documentEol: string;
 
 function getDefaultFile(): vs.Uri {
@@ -81,9 +85,9 @@ export async function activate(file?: vs.Uri): Promise<void> {
 	log(`Closing all open files`);
 	await closeAllOpenFiles();
 	log(`Opening ${fsPath(file)}`);
-	doc = await vs.workspace.openTextDocument(file);
+	const doc = await vs.workspace.openTextDocument(file);
 	log(`Showing ${fsPath(file)}`);
-	editor = await vs.window.showTextDocument(doc);
+	await vs.window.showTextDocument(doc);
 	documentEol = doc.eol === vs.EndOfLine.CRLF ? "\r\n" : "\n";
 	log(`Waiting for initial and any in-progress analysis`);
 	await ext.exports.initialAnalysis;
@@ -181,6 +185,7 @@ export function deferUntilLast(callback: (result?: "failed" | "passed") => Promi
 }
 
 export async function setTestContent(content: string): Promise<boolean> {
+	const doc = currentDoc();
 	const all = new vs.Range(
 		doc.positionAt(0),
 		doc.positionAt(doc.getText().length),
@@ -189,18 +194,19 @@ export async function setTestContent(content: string): Promise<boolean> {
 	// return editor.edit((eb) => eb.replace(all, content));
 	// once the fix for https://github.com/dart-lang/sdk/issues/32914
 	// has made it all the way through.
-	return editor.edit((eb) => eb.replace(all, content));
+	return currentEditor().edit((eb) => eb.replace(all, content));
 }
 
 export async function uncommentTestFile(): Promise<void> {
-	await setTestContent(doc.getText().replace(/\n\/\/ /mg, "\n"));
+	await setTestContent(currentDoc().getText().replace(/\n\/\/ /mg, "\n"));
 }
 
 export function select(range: vs.Range) {
-	editor.selection = new vs.Selection(range.start, range.end);
+	currentEditor().selection = new vs.Selection(range.start, range.end);
 }
 
 export function positionOf(searchText: string): vs.Position {
+	const doc = currentDoc();
 	const caretOffset = searchText.indexOf("^");
 	assert.notEqual(caretOffset, -1, `Couldn't find a ^ in search text (${searchText})`);
 	const matchedTextIndex = doc.getText().indexOf(searchText.replace("^", "").replace(/\n/g, documentEol));
@@ -210,6 +216,7 @@ export function positionOf(searchText: string): vs.Position {
 }
 
 export function rangeOf(searchText: string, inside?: vs.Range): vs.Range {
+	const doc = currentDoc();
 	const startOffset = searchText.indexOf("|");
 	assert.notEqual(startOffset, -1, `Couldn't find a | in search text (${searchText})`);
 	const endOffset = searchText.lastIndexOf("|");
@@ -229,12 +236,12 @@ export function rangeOf(searchText: string, inside?: vs.Range): vs.Range {
 }
 
 export async function getDocumentSymbols(): Promise<vs.SymbolInformation[]> {
-	const documentSymbolResult = await (vs.commands.executeCommand("vscode.executeDocumentSymbolProvider", doc.uri) as Thenable<vs.SymbolInformation[]>);
+	const documentSymbolResult = await (vs.commands.executeCommand("vscode.executeDocumentSymbolProvider", currentDoc().uri) as Thenable<vs.SymbolInformation[]>);
 	return documentSymbolResult || [];
 }
 
 export async function getDefinitions(position: vs.Position): Promise<vs.Location[]> {
-	const definitionResult = await (vs.commands.executeCommand("vscode.executeDefinitionProvider", doc.uri, position) as Thenable<vs.Location[]>);
+	const definitionResult = await (vs.commands.executeCommand("vscode.executeDefinitionProvider", currentDoc().uri, position) as Thenable<vs.Location[]>);
 	return definitionResult || [];
 }
 
@@ -269,7 +276,7 @@ export function ensureError(errors: vs.Diagnostic[], text: string) {
 	);
 }
 
-export function ensureSymbol(symbols: vs.SymbolInformation[], name: string, kind: vs.SymbolKind, containerName?: string, uri: vs.Uri = doc.uri, shouldHaveRange = true): void {
+export function ensureSymbol(symbols: vs.SymbolInformation[], name: string, kind: vs.SymbolKind, containerName?: string, uri: vs.Uri = currentDoc().uri, shouldHaveRange = true): void {
 	let symbol = symbols.find((f) =>
 		f.name === name
 		&& f.kind === kind
@@ -331,7 +338,7 @@ export function ensureIsRange(actual: vs.Range, expected: vs.Range) {
 
 export async function getCompletionsAt(searchText: string, triggerCharacter?: string): Promise<vs.CompletionItem[]> {
 	const position = positionOf(searchText);
-	const results = await (vs.commands.executeCommand("vscode.executeCompletionItemProvider", doc.uri, position, triggerCharacter) as Thenable<vs.CompletionList>);
+	const results = await (vs.commands.executeCommand("vscode.executeCompletionItemProvider", currentDoc().uri, position, triggerCharacter) as Thenable<vs.CompletionList>);
 	return results.items;
 }
 
@@ -377,6 +384,7 @@ export function ensureNoSnippet(items: vs.CompletionItem[], label: string): void
 }
 
 export async function ensureTestContent(expected: string): Promise<void> {
+	const doc = currentDoc();
 	// Wait for a short period before checking to reduce changes of flaky tests.
 	await waitFor(() =>
 		doc.getText().replace(/\r/g, "").trim() === expected.replace(/\r/g, "").trim(),
@@ -389,7 +397,7 @@ export async function ensureTestContent(expected: string): Promise<void> {
 
 export async function ensureTestContentWithCursorPos(expected: string): Promise<void> {
 	await ensureTestContent(expected.replace("^", ""));
-	await tryFor(() => assert.equal(doc.offsetAt(editor.selection.active), expected.indexOf("^")), 100);
+	await tryFor(() => assert.equal(currentDoc().offsetAt(currentEditor().selection.active), expected.indexOf("^")), 100);
 }
 
 export function delay(milliseconds: number): Promise<void> {
@@ -436,6 +444,7 @@ export async function tryFor(action: () => Promise<void> | void, milliseconds: n
 }
 
 export async function waitForEditorChange(action: () => Thenable<void>): Promise<void> {
+	const doc = currentDoc();
 	const oldVersion = doc.version;
 	await action();
 	await waitFor(() => doc.version !== oldVersion);

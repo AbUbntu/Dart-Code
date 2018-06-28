@@ -156,7 +156,7 @@ export class TestResultsProvider implements vs.Disposable, vs.TreeDataProvider<o
 	// when tests complete.
 	private markAncestorsRunning(node: SuiteTreeItem | GroupTreeItem | TestTreeItem) {
 		const status = TestStatus.Running;
-		let current = node;
+		let current: SuiteTreeItem | GroupTreeItem | TestTreeItem | undefined = node;
 		while (current) {
 			current.status = status;
 			this.updateNode(current);
@@ -499,8 +499,8 @@ class TestTreeItem extends TestItemTreeItem {
 	}
 }
 
-function getIconPath(status: TestStatus): vs.Uri {
-	let file: string;
+function getIconPath(status: TestStatus): vs.Uri | undefined {
+	let file: string | undefined;
 	switch (status) {
 		case TestStatus.Running:
 			file = "running";
@@ -526,7 +526,7 @@ function getIconPath(status: TestStatus): vs.Uri {
 			file = undefined;
 	}
 
-	return file
+	return file && extensionPath
 		? vs.Uri.file(path.join(extensionPath, `media/icons/tests/${file}.svg`))
 		: undefined;
 }

@@ -86,7 +86,7 @@ export class DartDebugClient extends DebugClient {
 		const scopes = await this.scopesRequest({ frameId: stack.body.stackFrames[0].id });
 		const exceptionScope = scopes.body.scopes.find((s) => s.name === scope);
 		assert.ok(exceptionScope);
-		return this.getVariables(exceptionScope.variablesReference);
+		return this.getVariables(exceptionScope!.variablesReference);
 	}
 
 	public async getVariables(variablesReference: number): Promise<DebugProtocol.Variable[]> {
@@ -173,7 +173,7 @@ export class DartDebugClient extends DebugClient {
 					}
 				},
 			),
-		]).then((_) => null);
+		]).then((_) => undefined);
 	}
 
 	public assertPassingTest(testName: string) {

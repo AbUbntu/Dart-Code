@@ -385,8 +385,8 @@ describe("dart cli debugger", () => {
 		});
 
 		const variables = await dc.getTopFrameVariables("Locals");
-		const listVariables = await dc.getVariables(variables.find((v) => v.name === "l").variablesReference);
-		const mapVariables = await dc.getVariables(variables.find((v) => v.name === "m").variablesReference);
+		const listVariables = await dc.getVariables(variables.find((v) => v.name === "l")!.variablesReference);
+		const mapVariables = await dc.getVariables(variables.find((v) => v.name === "m")!.variablesReference);
 		const allVariables = variables.concat(listVariables).concat(mapVariables);
 
 		for (const variable of allVariables) {

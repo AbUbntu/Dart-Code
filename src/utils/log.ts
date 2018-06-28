@@ -108,13 +108,13 @@ export function logTo(file: string, logCategories?: LogCategory[], maxLength = 2
 				logger.dispose();
 				logger = undefined;
 			}
-			if (logStream) {
-				logStream.write(`${(new Date()).toDateString()} ${time()}Log file ended${platformEol}`);
-				return new Promise((resolve) => {
+			return new Promise((resolve) => {
+				if (logStream) {
+					logStream.write(`${(new Date()).toDateString()} ${time()}Log file ended${platformEol}`);
 					logStream.end(resolve);
 					logStream = undefined;
-				});
-			}
+				}
+			});
 		},
 	};
 }

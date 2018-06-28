@@ -2,9 +2,9 @@ import * as vs from "vscode";
 import * as as from "../analysis/analysis_server_types";
 import { OpenFileTracker } from "../analysis/open_file_tracker";
 
-function findNode(outlines: as.Outline[], offset: number, useReducedRange: boolean, kinds: as.ElementKind[]): as.Outline | undefined {
+function findNode(outlines: as.Outline[] | undefined, offset: number, useReducedRange: boolean, kinds: as.ElementKind[]): as.Outline | undefined {
 	if (!outlines)
-		return null;
+		return undefined;
 	for (const outline of outlines) {
 		const outlineStart = outline.offset;
 		const outlineEnd = outline.offset + outline.length;
@@ -19,7 +19,7 @@ function findNode(outlines: as.Outline[], offset: number, useReducedRange: boole
 			|| (offset >= outlineStart && offset <= outline.element.location.offset + outline.element.location.length);
 
 		return findNode(outline.children, offset, useReducedRange, kinds)
-			|| (kinds.indexOf(outline.element.kind) !== -1 && isInReducedRange ? outline : null);
+			|| (kinds.indexOf(outline.element.kind) !== -1 && isInReducedRange ? outline : undefined);
 	}
 }
 

@@ -46,15 +46,21 @@ export class TestResultsProvider implements vs.Disposable, vs.TreeDataProvider<o
 		}));
 		this.disposables.push(vs.debug.onDidTerminateDebugSession((session) => this.handleSessionEnd(session)));
 		this.disposables.push(vs.commands.registerCommand("dart.startDebuggingTest", (treeNode: SuiteTreeItem | TestTreeItem) => {
+			const launchConfig = this.getLaunchConfig(false, treeNode);
+			if (!treeNode.resourceUri || !launchConfig)
+				return;
 			vs.debug.startDebugging(
 				vs.workspace.getWorkspaceFolder(treeNode.resourceUri),
-				this.getLaunchConfig(false, treeNode),
+				launchConfig,
 			);
 		}));
 		this.disposables.push(vs.commands.registerCommand("dart.startWithoutDebuggingTest", (treeNode: SuiteTreeItem | TestTreeItem) => {
+			const launchConfig = this.getLaunchConfig(true, treeNode);
+			if (!treeNode.resourceUri || !launchConfig)
+				return;
 			vs.debug.startDebugging(
 				vs.workspace.getWorkspaceFolder(treeNode.resourceUri),
-				this.getLaunchConfig(true, treeNode),
+				launchConfig,
 			);
 		}));
 
@@ -88,9 +94,12 @@ export class TestResultsProvider implements vs.Disposable, vs.TreeDataProvider<o
 					}
 				}
 			}
+			const url = treeNode.test.root_url || treeNode.test.url;
+			if (!url)
+				return;
 			return vs.commands.executeCommand(
 				"_dart.jumpToLineColInUri",
-				vs.Uri.parse(treeNode.test.root_url || treeNode.test.url),
+				vs.Uri.parse(url),
 				treeNode.test.root_line || treeNode.test.line,
 				treeNode.test.root_column || treeNode.test.column,
 			);
@@ -98,11 +107,13 @@ export class TestResultsProvider implements vs.Disposable, vs.TreeDataProvider<o
 	}
 
 	private getLaunchConfig(noDebug: boolean, treeNode: SuiteTreeItem | TestTreeItem) {
+		if (!treeNode.resourceUri)
+			return undefined;
 		return {
 			args: treeNode instanceof TestTreeItem ? ["--plain-name", treeNode.test.name] : undefined,
 			name: "Tests",
 			noDebug,
-			program: fsPath(treeNode.resourceUri),
+			program: fsPath(treeNode.resourceUri!),
 			request: "launch",
 			type: "dart",
 		};
@@ -125,7 +136,7 @@ export class TestResultsProvider implements vs.Disposable, vs.TreeDataProvider<o
 		return items;
 	}
 
-	public getParent?(element: vs.TreeItem): SuiteTreeItem | GroupTreeItem {
+	public getParent?(element: vs.TreeItem): SuiteTreeItem | GroupTreeItem | undefined {
 		if (element instanceof TestTreeItem || element instanceof GroupTreeItem)
 			return element.parent;
 	}
@@ -218,7 +229,7 @@ export class TestResultsProvider implements vs.Disposable, vs.TreeDataProvider<o
 	private handleTestStartNotifcation(suite: SuiteData, evt: TestStartNotification) {
 		const isExistingTest = !!suite.tests[evt.test.id];
 		const testNode = suite.tests[evt.test.id] || new TestTreeItem(suite, evt.test);
-		let oldParent: SuiteTreeItem | GroupTreeItem;
+		let oldParent: SuiteTreeItem | GroupTreeItem | undefined;
 
 		if (!isExistingTest)
 			suite.tests[evt.test.id] = testNode;
@@ -228,7 +239,7 @@ export class TestResultsProvider implements vs.Disposable, vs.TreeDataProvider<o
 
 		// If this is a "loading" test then mark it as hidden because it looks wonky in
 		// the tree with a full path and we already have the "running" icon on the suite.
-		if (testNode.test.name.startsWith("loading ") && testNode.parent instanceof SuiteTreeItem)
+		if (testNode.test.name && testNode.test.name.startsWith("loading ") && testNode.parent instanceof SuiteTreeItem)
 			testNode.hidden = true;
 		else
 			testNode.hidden = false;

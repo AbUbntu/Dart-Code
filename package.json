@@ -610,7 +610,9 @@
 							"testFailure"
 						]
 					},
-					"default": ["testRunStart"],
+					"default": [
+						"testRunStart"
+					],
 					"description": "When to automatically switch focus to the test list (array to support multiple values).",
 					"scope": "window"
 				},

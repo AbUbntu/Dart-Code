@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as net from "net";
 import * as path from "path";
 import * as vs from "vscode";
-import { CancellationToken, DebugConfiguration, DebugConfigurationProvider, ProviderResult, Uri, window, workspace, WorkspaceFolder } from "vscode";
+import { CancellationToken, DebugConfiguration, DebugConfigurationProvider, ProviderResult, Uri, WorkspaceFolder, window, workspace } from "vscode";
 import { DebugSession } from "vscode-debugadapter";
 import { Analytics } from "../analytics";
 import { config } from "../config";
@@ -14,9 +14,11 @@ import { FlutterLaunchRequestArguments, forceWindowsDriveLetterToUppercase, isWi
 import { FlutterDeviceManager } from "../flutter/device_manager";
 import { locateBestProjectRoot } from "../project";
 import { dartVMPath, flutterPath, pubPath, pubSnapshotPath } from "../sdk/utils";
-import { fsPath, isFlutterProjectFolder, isFlutterWorkspaceFolder, isInsideFolderNamed, isTestFile, ProjectType, Sdks, supportsPubRunTest } from "../utils";
+import { ProjectType, Sdks, fsPath, isFlutterProjectFolder, isFlutterWorkspaceFolder, isInsideFolderNamed, isTestFile, supportsPubRunTest } from "../utils";
 import { log, logWarn } from "../utils/log";
 import { TestResultsProvider } from "../views/test_view";
+
+export const TRACK_WIDGET_CREATION_ENABLED = "dart-code:trackWidgetCreationEnabled";
 
 export class DebugConfigProvider implements DebugConfigurationProvider {
 	private sdks: Sdks;
@@ -166,7 +168,16 @@ export class DebugConfigProvider implements DebugConfigurationProvider {
 
 		this.analytics.logDebuggerStart(folder && folder.uri);
 
+<<<<<<< HEAD
 		log(`Debug session starting...\n    ${JSON.stringify(debugConfig, undefined, 4).replace(/\n/g, "\n    ")}`);
+=======
+		// TODO: Remove this context (and associated condition on the command) when it is default, inc. for beta channel.
+		if (debugConfig.args) {
+			const args: string[] = debugConfig.args;
+			const trackWidgetCreationEnabled = args.indexOf("--track-widget-creation") !== -1;
+			vs.commands.executeCommand("setContext", TRACK_WIDGET_CREATION_ENABLED, trackWidgetCreationEnabled);
+		}
+>>>>>>> Allow inspect widget to jump to source
 
 		return debugConfig;
 	}

@@ -1,5 +1,9 @@
 import * as vs from "vscode";
 
+export function getActiveDartEditor(): vs.TextEditor | undefined {
+	return isDartEditor(vs.window.activeTextEditor) ? vs.window.activeTextEditor : undefined;
+}
+
 export function hasActiveDartEditor(): boolean {
 	return isDartEditor(vs.window.activeTextEditor);
 }

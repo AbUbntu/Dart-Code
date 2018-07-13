@@ -3,7 +3,7 @@ import * as path from "path";
 import * as vs from "vscode";
 import { config } from "./config";
 import { Context } from "./context";
-import { FLUTTER_CREATE_PROJECT_TRIGGER_FILE, extensionVersion, fsPath, getDartWorkspaceFolders, isDevExtension, openInBrowser } from "./utils";
+import { extensionVersion, FLUTTER_CREATE_PROJECT_TRIGGER_FILE, fsPath, getDartWorkspaceFolders, isDevExtension, openInBrowser } from "./utils";
 
 export function showUserPrompts(context: vs.ExtensionContext) {
 	handleNewProjects(Context.for(context));
@@ -69,6 +69,7 @@ function handleNewProjects(context: Context) {
 			// Bail out of find so we only do this at most once.
 			return true;
 		}
+		return false;
 	});
 }
 

@@ -12,13 +12,13 @@ export abstract class StdIOService<T> implements IAmDisposable {
 	private nextRequestID = 1;
 	private activeRequests: { [key: string]: [(result: any) => void, (error: any) => void, string] } = {};
 	private messageBuffer: string[] = [];
-	private currentLogFile: string;
+	private currentLogFile: string | undefined;
 	private logStream?: fs.WriteStream;
 	private requestErrorSubscriptions: Array<(notification: any) => void> = [];
 	private processExited = false;
 
 	constructor(
-		public readonly getLogFile: () => string,
+		public readonly getLogFile: () => string | undefined,
 		public readonly logger: (message: string, severity: LogSeverity) => void,
 		public messagesWrappedInBrackets: boolean = false,
 		public readonly treatHandlingErrorsAsUnhandledMessages: boolean = false) {

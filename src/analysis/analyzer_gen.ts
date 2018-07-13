@@ -10,7 +10,7 @@ import { log } from "../utils/log";
 import * as as from "./analysis_server_types";
 
 export abstract class AnalyzerGen extends StdIOService<UnknownNotification> {
-	constructor(getLogFile: () => string) {
+	constructor(getLogFile: () => string | undefined) {
 		super(getLogFile, (message, severity) => log(message, severity, LogCategory.Analyzer));
 	}
 

@@ -57,6 +57,8 @@ console.log('Current working directory: ' + process.cwd());
 
 function runTests() {
 	var args = [
+		'--log',
+		'trace',
 		testsWorkspace,
 		'--extensionDevelopmentPath=' + extensionsFolder,
 		'--extensionTestsPath=' + testsFolder

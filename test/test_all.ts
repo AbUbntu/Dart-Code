@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 const supportsColor = require("supports-color"); // tslint:disable-line:no-var-requires
 
-const args = ["node_modules/vscode/bin/test"];
+const args = ["test/test"];
 let exitCode = 0;
 
 function red(message: string): string { return color(91, message); }

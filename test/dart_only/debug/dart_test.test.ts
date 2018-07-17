@@ -7,7 +7,7 @@ import { logInfo } from "../../../src/utils/log";
 import { DartDebugClient } from "../../dart_debug_client";
 import { activate, defer, delay, ext, getLaunchConfiguration, getPackages, helloWorldTestBrokenFile, helloWorldTestMainFile, openFile, positionOf, withTimeout } from "../../helpers";
 
-describe("dart test debugger", () => {
+describe.skip("dart test debugger", () => {
 	// We have tests that require external packages.
 	before("get packages", () => getPackages());
 

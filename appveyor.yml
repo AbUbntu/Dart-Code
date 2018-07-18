@@ -1,3 +1,9 @@
+cache:
+  directories:
+     - node_modules
+     - '%APPDATA%\npm-cache'
+     - '%APPDATA%\Pub\Cache'
+
 environment:
   CHAT_WEBHOOK_PATH:
     secure: Oawgup4p18hTqsE2qGz07QLvtL/xrDiGFmqs9ebmXATs6t/Mp6L/sVS0XbAgmXhuOtZ8Q3KDC//q0ViBEnNiaEcZg3cI3GGPchtIQYjAozEC+3d3SXQY9zcSymAPgYsmc1TOsC+3BbuYXskoTu6myDbRPfh2i0YuU2lr0SRRbGS+68fGhBiPhZtkS6DOfDfu
@@ -62,7 +68,6 @@ install:
 
 build_script:
   - npm install --depth 0
-
 
 test_script:
   - npm run vscode:prepublish

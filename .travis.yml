@@ -7,6 +7,11 @@ os:
 language: node_js
 node_js: lts/*
 
+cache:
+  directories:
+     - node_modules
+     - $HOME/.pub_cache
+
 env:
   # travis encrypt "CHAT_WEBHOOK_PATH=\"/v1/xxx\""
   global:

@@ -10,7 +10,7 @@ node_js: lts/*
 cache:
   directories:
      - node_modules
-     - $HOME/.pub_cache
+     - $HOME/.pub-cache
 
 env:
   # travis encrypt "CHAT_WEBHOOK_PATH=\"/v1/xxx\""

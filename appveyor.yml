@@ -1,8 +1,7 @@
 cache:
-  directories:
-    - node_modules
-    - '%APPDATA%\npm-cache'
-    - '%APPDATA%\Pub\Cache'
+  - node_modules
+  - '%APPDATA%\npm-cache'
+  - '%APPDATA%\Pub\Cache'
 
 environment:
   CHAT_WEBHOOK_PATH:

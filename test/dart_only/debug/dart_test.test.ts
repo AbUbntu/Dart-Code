@@ -158,7 +158,7 @@ describe("dart test debugger", () => {
 		assert.equal(actualResults, expectedResults);
 	});
 
-	it("sorts suites correctly", async () => {
+	it.only("sorts suites correctly", async () => {
 		// Run each test file in a different order to how we expect the results.
 		for (const file of [helloWorldTestSkipFile, helloWorldTestMainFile, helloWorldTestTreeFile, helloWorldTestBrokenFile]) {
 			await openFile(file);

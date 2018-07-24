@@ -357,6 +357,7 @@ export class TestResultsProvider implements vs.Disposable, vs.TreeDataProvider<o
 	}
 
 	private handleSuiteEnd(suite: SuiteData) {
+		console.log("Handling suite end...");
 		if (!suite)
 			return;
 
@@ -374,6 +375,7 @@ export class TestResultsProvider implements vs.Disposable, vs.TreeDataProvider<o
 		});
 
 		// Anything marked as running should be set back to Unknown
+		console.log("Setting tests that were stuck as running...");
 		suite.getAllTests().filter((t) => t.status === TestStatus.Running).forEach((t) => {
 			t.status = TestStatus.Unknown;
 			this.updateNode(t);

@@ -11,7 +11,7 @@ import { TestResultsProvider, TestStatus } from "../../../src/views/test_view";
 import { DartDebugClient } from "../../dart_debug_client";
 import { activate, defer, delay, ext, extApi, getExpectedResults, getLaunchConfiguration, getPackages, helloWorldTestBrokenFile, helloWorldTestMainFile, helloWorldTestSkipFile, helloWorldTestTreeFile, openFile, positionOf, withTimeout } from "../../helpers";
 
-describe("dart test debugger", () => {
+describe.only("dart test debugger", () => {
 	// We have tests that require external packages.
 	before("get packages", () => getPackages());
 	beforeEach("activate helloWorldTestMainFile", () => activate(helloWorldTestMainFile));
@@ -158,7 +158,7 @@ describe("dart test debugger", () => {
 		assert.equal(actualResults, expectedResults);
 	});
 
-	it.only("sorts suites correctly", async () => {
+	it("sorts suites correctly", async () => {
 		// Run each test file in a different order to how we expect the results.
 		for (const file of [helloWorldTestSkipFile, helloWorldTestMainFile, helloWorldTestTreeFile, helloWorldTestBrokenFile]) {
 			await openFile(file);

@@ -72,7 +72,9 @@ before_install:
   - export DART_SDK_PATHS=`pwd`/dart-sdk/bin:`pwd`/flutter/bin
   - echo Pointing flutter/bin/cache at shared cache $HOME/.flutter-cache
   - mkdir -p $HOME/.flutter-cache
+  - ls $HOME/.flutter-cache
   - ln -s $HOME/.flutter-cache flutter/bin/cache
+  - flutter/bin/cache
   - echo Configuring Dart and Flutter...
   - flutter/bin/flutter config --no-analytics
   - flutter/bin/flutter update-packages
@@ -106,6 +108,7 @@ script:
     fi;
 
 after_script:
+  - ls $HOME/.flutter-cache
   - if [ $TRAVIS_PULL_REQUEST = "false" ]; then
       dpl --provider=s3 --bucket="test-results.dartcode.org" --skip_cleanup=true --local-dir=".test_results" --upload-dir="$TRAVIS_BRANCH/$TRAVIS_COMMIT/$TRAVIS_OS_NAME" --acl=public_read --default_text_charset=utf-8;
       dpl --provider=s3 --bucket="test-results.dartcode.org" --skip_cleanup=true --local-dir=".dart_code_test_logs" --upload-dir="logs/$TRAVIS_BRANCH/$TRAVIS_COMMIT/$TRAVIS_OS_NAME" --acl=public_read --default_text_charset=utf-8;

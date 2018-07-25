@@ -12,6 +12,7 @@ cache:
      - node_modules
      - $HOME/.npm
      - $HOME/.pub-cache
+     - $HOME/.flutter-cache
 
 env:
   # travis encrypt "CHAT_WEBHOOK_PATH=\"/v1/xxx\""
@@ -69,6 +70,9 @@ before_install:
   - git clone -b $FLUTTER_BRANCH https://github.com/flutter/flutter.git
   - export FLUTTER_ROOT=`pwd`/flutter
   - export DART_SDK_PATHS=`pwd`/dart-sdk/bin:`pwd`/flutter/bin
+  - echo Pointing flutter/bin/cache at shared cache
+  - mkdir -p $HOME/.flutter-cache
+  - ln -s $HOME/.flutter-cache flutter/bin/cache
   - echo Configuring Dart and Flutter...
   - flutter/bin/flutter config --no-analytics
   - flutter/bin/flutter update-packages

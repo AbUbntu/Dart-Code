@@ -142,7 +142,7 @@ async function runAllTests(): Promise<void> {
 
 	const flutterRoot = process.env.FLUTTER_ROOT;
 	const totalRuns = 6;
-	// let runNumber = 1;
+	// let runNumber = 1;..
 	try {
 		// await runTests("dart_only", "hello_world", sdkPath, codeVersion, `${runNumber++} of ${totalRuns}`);
 		// await runTests("flutter_only", "flutter_hello_world", sdkPath, codeVersion, `${runNumber++} of ${totalRuns}`);

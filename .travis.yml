@@ -72,6 +72,7 @@ before_install:
   - export DART_SDK_PATHS=`pwd`/dart-sdk/bin:`pwd`/flutter/bin
   - echo Pointing flutter/bin/cache at shared cache $HOME/.flutter-cache
   - mkdir -p $HOME/.flutter-cache
+  - ls $HOME/.pub-cache
   - ls $HOME/.flutter-cache
   - ln -s $HOME/.flutter-cache flutter/bin/cache
   - flutter/bin/cache

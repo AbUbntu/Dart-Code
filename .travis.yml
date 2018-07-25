@@ -75,7 +75,7 @@ before_install:
   - ls $HOME/.pub-cache
   - ls $HOME/.flutter-cache
   - ln -s $HOME/.flutter-cache flutter/bin/cache
-  - flutter/bin/cache
+  - ls flutter/bin/cache
   - echo Configuring Dart and Flutter...
   - flutter/bin/flutter config --no-analytics
   - flutter/bin/flutter update-packages

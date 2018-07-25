@@ -80,6 +80,7 @@ before_install:
   - flutter/bin/flutter config --no-analytics
   - flutter/bin/flutter update-packages
   - flutter/bin/flutter update-packages
+  - flutter/bin/flutter update-packages
   - dart-sdk/bin/dart --version
   - flutter/bin/flutter --version
   - node --version
